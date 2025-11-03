@@ -174,7 +174,7 @@ void dispatchCharEvent(int surface_id, const char* utf8_text) {
     ev.type = KeyEvent::kType_Char;
     // strncpy(ev.text, utf8_text, sizeof(ev.text) - 1);
     ev.text = utf8_text;
-    ev.unmodified_text = utf8_text;
+    ev.unmodified_text = "d";
     view->FireKeyEvent(ev);
 }
 

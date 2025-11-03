@@ -37,10 +37,3 @@
     physical processors (detected): 2
     num threads: 1
 
-> Creating View with the following configuration:
-    width: 800
-    height: 300
-    device scale: 1
-    session id: 2
-    is_accelerated: 0
-

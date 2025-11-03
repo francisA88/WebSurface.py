@@ -1,5 +1,7 @@
 # from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.textinput import TextInput
+from kivy.uix.behaviors import FocusBehavior
 from kivy.graphics.texture import Texture
 from kivy.properties import NumericProperty
 from kivy.graphics import Rectangle, Color
@@ -34,7 +36,7 @@ class WebSurface(FloatLayout):
         self._buttons_held = set()
 
         self.initWebSurface()
-
+    
     def initWebSurface(self):
         self.index = lib.initWebSurface(
             c_int(self.uw), 
@@ -165,7 +167,7 @@ class WebSurface(FloatLayout):
         lib.dispatchKeyEvent(c_int(self.index), create_string_buffer(b"down"), newkey, self.current_mods, create_string_buffer(bytes(chr(key), 'utf8')))
         
         if key not in non_printable_keycodes and codepoint is not None and key != 13: # 13 is for the "Enter" key. I have to handle that specially
-            lib.dispatchCharEvent(self.index, codepoint)
+            lib.dispatchCharEvent(self.index, get_text_from_keycode_and_modifiers(codepoint, self.current_mods))
             pass
         if key == 13:
             print("here")
@@ -248,8 +250,9 @@ if __name__ == "__main__":
             #     html=open("test.html", "r").read()
             # )
             root.add_widget(self.ws)
+            root.add_widget(TextInput(size_hint=(None, None), size=(200, 50), pos=(10,10)))
             # root.add_widget(self.ws1)
-            self.ws1.load_url("https://www.wikipedia.org")
+            # self.ws1.load_url("https://www.wikipedia.org")
 
             return root
         

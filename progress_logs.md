@@ -10,3 +10,9 @@ Worked on translating most events from Kivy to the Ultralight renderer backend
 #### Date: 24th of October, 2025
 
 Worked largely on translating keyboard presses from Kivy to Ultralight. Got stuck at interpreting events having modifiers too, like Caps Lock and shift
+
+#### Date: 3rd of November, 2025
+
+- Still wworked on properly translating keyboard inputs. Also worked on extending the WebSurface widget to allow multiple independent instances, just like other all other widgets.
+- Finished working on translating the keyboard input for now. Work still needs be done with respect to accounting for all input method.
+- Work remains to be done for translating game pad input

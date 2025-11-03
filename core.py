@@ -28,10 +28,42 @@ lib.dispatchKeyEvent.argtypes = [c_int, c_void_p, c_int, c_int]
 button_codes = {'none': 0, 'left': 1, 'middle': 2, 'right': 3}
 non_printable_keycodes = [27, 9, 277, 279, 278, 127, 8, 13, 303, 304, 305, 273, 275, 274, 276, 306, 280, 281, 307, 308, 301] + list(range(282, 294))
 
+SHIFT_MAP = {
+    '`': '~', '1': '!', '2': '@', '3': '#', '4': '$', '5': '%', '6': '^',
+    '7': '&', '8': '*', '9': '(', '0': ')', '-': '_', '=': '+',
+    '[': '{', ']': '}', '\\': '|',
+    ';': ':', "'": '"',
+    ',': '<', '.': '>', '/': '?'
+}
+
 MOD_SHIFT = 1 << 1
 MOD_CTRL  = 1 << 0
 MOD_ALT   = 1 << 2
 MOD_META  = 1 << 3
+MOD_CAPSLOCK = 1 << 4
+
+def get_text_from_keycode_and_modifiers(key: str, modifiers: int) -> str:
+    """
+    Returns the character string produced by a key and modifiers.
+    Key is typically Kivy's event.key or a single-character string.
+    """
+    if not key or len(key) != 1:
+        return ""
+
+    shift = bool(modifiers & MOD_SHIFT)
+    caps = bool(modifiers & MOD_CAPSLOCK)
+
+    # Letters
+    if key.isalpha():
+        upper = shift ^ caps  # XOR: only one active makes uppercase
+        return key.upper() if upper else key.lower()
+
+    # Digits and symbols
+    if key in SHIFT_MAP:
+        return SHIFT_MAP[key] if shift else key
+
+    return key  # Unaffected characters (space, etc.)
+
 
 def make_modmask(modifiers):
     mask = 0
@@ -43,6 +75,8 @@ def make_modmask(modifiers):
         mask |= MOD_ALT
     if 'meta' in modifiers or 'super' in modifiers:
         mask |= MOD_META
+    if 'capslock' in modifiers:
+        mask |= MOD_CAPSLOCK
     return mask
 
 def kivy_to_ultralight_vk(keycode: int) -> int:
@@ -86,5 +120,7 @@ def kivy_to_ultralight_vk(keycode: int) -> int:
 
     # Return mapped value or fallback
     return mapping.get(keycode, 0)
+
+
 
 
