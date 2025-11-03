@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Control Panel</title>
+<style>
+  :root{
+    --bg: #b7849577;
+    --card:#ffffff;
+    --blue-500:#2196f3;
+    --blue-600:#c319d2;
+    --text:#0f253f;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* Center everything */
+  .stage{
+    min-height: 100%;
+    min-width: 100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+    box-sizing:border-box;
+    overflow-y: scroll;
+  }
+
+  /* Card to hold controls and display area */
+  .card{
+    width:760px;
+    max-width:96%;
+    background:var(--card);
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(20,30,60,0.08);
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  /* Buttons row: horizontally aligned and centered */
+  .controls{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .mui-btn{
+    --btn-bg: linear-gradient(180deg, var(--blue-500), var(--blue-600));
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:10px 18px;
+    height:44px;
+    border-radius:8px;
+    border: none;
+    color:#fff;
+    font-weight:600;
+    letter-spacing:0.2px;
+    cursor:arrow;
+    background:var(--btn-bg);
+    box-shadow: 0 6px 18px rgba(33,150,243,0.18);
+    transition:transform .08s ease, box-shadow .12s ease, filter .12s;
+    user-select:none;
+  }
+  .mui-btn:active{
+    transform:translateY(1px);
+    box-shadow: 0 4px 10px rgba(33,150,243,0.14);                                           
+  }
+  .mui-btn:focus{
+    outline:2px solid rgba(33,150,243,0.18);
+    outline-offset:2px;
+    background: red;
+  }
+
+  /* Display area uses remaining free space inside the card */
+  .display{
+    min-height:180px;
+    border-radius:10px;
+    background:linear-gradient(180deg,#fbfdff,#ffffff);
+    padding:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:18px;
+    color:var(--text);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+
+  /* Small helper for label text */
+  .muted{
+    color: #4b5563;
+    font-size:13px;
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="card" role="region" aria-label="Control panel">
+      <div class="controls" role="toolbar" aria-label="Buttons">
+        <button class="mui-btn" id="btn-primary" aria-pressed="false">Primary</button>
+        <button class="mui-btn" id="btn-secondary" aria-pressed="false">Secondary</button>
+        <button class="mui-btn" id="btn-tertiary" aria-pressed="false">Tertiary</button>
+      </div>
+
+      <div class="display" id="message" aria-live="polite">
+        <div>
+          <div style="font-size:15px; color:#374151;">Welcome — click a button</div>
+          <div class="muted" style="margin-top:8px;">The action result will appear here.</div>
+        </div>
+      </div>
+      <input type="number">
+      <input type="checkbox" name="" id="">
+      <input type="file" name="" id="">
+      <textarea></textarea>
+    </div>
+  </div>
+  <input type="text" onkeydown="log(event.key, event.keyCode, event.ctrlKey, event.altKey)">
+
+<script>
+  let btn = document.querySelector('#btn-primary');
+  let msg = document.querySelector('#message');
+       
+  document.body.onload = () => {
+    btn.onclick = () => {
+      msg.innerHTML = "<div><div style='font-size:15px; color:#374151;'>Primary button clicked!</div><div class='muted' style='margin-top:8px;'>This is the result of your action.</div></div>";
+      btn.style.background = "red"
+      localStorage.setItem("testss", "dwudhwudwjwidwdwdwrrdyjy");
+      btn.textContent = `${localStorage.getItem("testss")}`;
+      msg.innerHTML = `${localStorage.getItem('testss')}` 
+    };
+  };
+  function log(key, keycode, ctrlkey, altkey){
+    msg.innerHTML = `Key: ${key}, keycode: ${keycode}, ctrlKey: ${ctrlkey}, ALtkey: ${altkey}`  
+  }
+  
+</script>
+</body>
+</html>

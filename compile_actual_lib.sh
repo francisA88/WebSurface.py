@@ -1,0 +1,1 @@
+g++ websurface.cpp -o libwebsurface.so -shared -fPIC -L/home/pennywise/programming/adventurous_programing/ultralight-free-sdk-1.4.0-linux-x64/bin -I /home/pennywise/programming/adventurous_programing/ultralight-free-sdk-1.4.0-linux-x64/include -lAppCore -lUltralight -lUltralightCore -lWebCore -std=c++17 -pthread -ldl
