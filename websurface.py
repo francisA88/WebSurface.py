@@ -30,7 +30,9 @@ class WebSurface(FloatLayout):
         Window.bind(on_key_down=self._on_key_down_global,
                     on_key_up=self._on_key_up_global,
                     # on_scroll=self._on_scroll_global,
-                    mouse_pos=self._on_mouse_over_global)
+                    mouse_pos=self._on_mouse_over_global,
+                    # on_textinput=self._on_text_input
+                    )
 
         # Track held buttons for mouse-move logic
         self._buttons_held = set()
@@ -158,19 +160,19 @@ class WebSurface(FloatLayout):
 
     def on_key_down(self, key, scancode, codepoint, modifiers):
         """Triggered for any key press while focused."""
-        print(f"Key down: key={key}, code={codepoint}, mods={modifiers}, scancode={scancode}")
-        print("Down: ", chr(key))
+        # print(f"Key down: key={key}, code={codepoint}, mods={modifiers}, scancode={scancode}")
+        # print("Down: ", chr(key))
         # Combines all modifiers and passes it to the Ultralight library
         self.current_mods = make_modmask(modifiers)
         newkey = kivy_to_ultralight_vk(key)
-        print("translated key: ", newkey)
+        # print("translated key: ", newkey)
         lib.dispatchKeyEvent(c_int(self.index), create_string_buffer(b"down"), newkey, self.current_mods, create_string_buffer(bytes(chr(key), 'utf8')))
         
         if key not in non_printable_keycodes and codepoint is not None and key != 13: # 13 is for the "Enter" key. I have to handle that specially
             lib.dispatchCharEvent(self.index, get_text_from_keycode_and_modifiers(codepoint, self.current_mods))
             pass
         if key == 13:
-            print("here")
+            # print("here")
             lib.dispatchCharEvent(self.index, b"\r\n")
         return True
     
@@ -182,7 +184,7 @@ class WebSurface(FloatLayout):
 
     def on_key_up(self, key, scancode, *args):
         """Triggered when key is released while focused."""
-        print(f"Key up: key={key} scancode={scancode}")
+        # print(f"Key up: key={key} scancode={scancode}")
         key = kivy_to_ultralight_vk(key)
         lib.dispatchKeyEvent(self.index, create_string_buffer(b"up"), key, self.current_mods, create_string_buffer(bytes(chr(key), 'utf8')))
         self.current_mods = 0
@@ -206,6 +208,19 @@ class WebSurface(FloatLayout):
             ul_y = int(self.uh - (y - self.y))  # Invert Y axis
             lib.dispatchMouseEvent(self.index, c_int(ul_x), c_int(ul_y), c_int(button_codes[btn]), create_string_buffer(b"move"))
             
+
+    def _on_text_input(self, window, text):
+        if not self.is_focused():
+            print("Not focused, ignoring text input")
+            return False
+        return self.on_text_input(window, text)
+
+    def on_text_input(self, window, text):
+        """Triggered for text input while focused."""
+        print(f"Text input: {text}")
+        lib.dispatchCharEvent(self.index, bytes(text, 'utf8'))
+        return True
+
 
     ## } End Event handlers
     
@@ -258,6 +273,20 @@ if __name__ == "__main__":
         
         def on_start(self):
             # self.ws.load_url("https://chatgpt.com/")
+            script = b'''
+            function tick(){
+                setInterval(()=>console.log("Tick from JS!"), 1000);
+            }
+            btn = document.querySelector("#btn-primary");
+            btn.innerText = "ihsdysgdysdgwydw";
+            tick();
+            for (i = 0; i < 10; i++){
+                console.log("Count: " + i);
+                
+            '''
+            result = lib.evaluateScript(self.ws.index, c_char_p(script))
+            # lib.free_cstring(result)
+            print(result)
             pass
 
         def on_stop(self):

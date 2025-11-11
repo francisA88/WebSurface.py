@@ -1,5 +1,6 @@
 #include <AppCore/AppCore.h>
 #include <Ultralight/Ultralight.h>
+#include <JavaScriptCore/JavaScript.h>
 #include <iostream>
 
 #define print std::cout<<
@@ -201,8 +202,6 @@ void focusView(int surface_id) {
     view->Focus();
 }
 
-
-
 // Cleanup everything
 void destroySurface(int surface_id) {
     if (surface_id < 0 || surface_id >= g_views.size()) return;
@@ -212,6 +211,38 @@ void destroySurface(int surface_id) {
 
 void destroyRenderer(){
     g_renderer = nullptr;
+}
+
+const char* evaluateScript(int surface_id, const char* script_text) {
+    if (surface_id < 0 || surface_id >= g_views.size()) return nullptr;
+    RefPtr<View> view = g_views[surface_id];
+    if (!view) return nullptr;
+
+    JSContextRef ctx = *view->LockJSContext();
+    JSStringRef script = JSStringCreateWithUTF8CString(script_text);
+    JSValueRef exception = nullptr;
+    JSValueRef result = JSEvaluateScript(ctx, script, nullptr, nullptr, 1, &exception);
+    JSStringRelease(script);
+
+    const char* out_str = nullptr;
+    JSStringRef resultStr = nullptr;
+
+    if (exception) {
+        resultStr = JSValueToStringCopy(ctx, exception, nullptr);
+    } else {
+        resultStr = JSValueToStringCopy(ctx, result, nullptr);
+    }
+
+    size_t max_size = JSStringGetMaximumUTF8CStringSize(resultStr);
+    char* buffer = new char[max_size];
+    JSStringGetUTF8CString(resultStr, buffer, max_size);
+    JSStringRelease(resultStr);
+
+    return buffer;
+}
+
+void free_cstring(const char* str) {
+    delete[] str;
 }
 
 } // extern "C"

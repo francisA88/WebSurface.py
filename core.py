@@ -23,6 +23,11 @@ lib.destroySurface.argtypes = [c_int]
 lib.isFocused.argtypes = [c_int]
 lib.isFocused.restype = c_bool
 lib.dispatchKeyEvent.argtypes = [c_int, c_void_p, c_int, c_int]
+lib.evaluateScript.argtypes = [c_int, c_char_p]
+lib.evaluateScript.restype = c_char_p
+lib.free_cstring.argtypes = [c_char_p]
+lib.free_cstring.restype = None
+
 
 
 button_codes = {'none': 0, 'left': 1, 'middle': 2, 'right': 3}
